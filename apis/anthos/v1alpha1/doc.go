@@ -17,6 +17,6 @@ limitations under the License.
 // Package v1alpha1 contains managed resources for GCP compute services such as
 // Firewall.
 // +kubebuilder:object:generate=true
-// +groupName=compute.gcp.crossplane.io
+// +groupName=anthos.gcp.crossplane.io
 // +versionName=v1alpha1
 package v1alpha1

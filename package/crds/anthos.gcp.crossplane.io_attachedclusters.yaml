@@ -5,17 +5,37 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.8.0
   creationTimestamp: null
-  name: attachedclusters.compute.gcp.crossplane.io
+  name: attachedclusters.anthos.gcp.crossplane.io
 spec:
-  group: compute.gcp.crossplane.io
+  group: anthos.gcp.crossplane.io
   names:
+    categories:
+    - crossplane
+    - managed
+    - gcp
     kind: AttachedCluster
     listKind: AttachedClusterList
     plural: attachedclusters
     singular: attachedcluster
-  scope: Namespaced
+  scope: AttachedCluster
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Synced')].status
+      name: SYNCED
+      type: string
+    - jsonPath: .status.atProvider.status
+      name: STATE
+      type: string
+    - jsonPath: .spec.forProvider.location
+      name: LOCATION
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: AttachedCluster is a managed resource that represents a Google

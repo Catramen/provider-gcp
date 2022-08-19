@@ -46,5 +46,5 @@ var (
 )
 
 func init() {
-	SchemeBuilder.Register(&AttachedCluster{}, &AttachedCluster{})
+	SchemeBuilder.Register(&AttachedCluster{}, &AttachedClusterList{})
 }
