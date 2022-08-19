@@ -21,6 +21,7 @@ import (
 
 	"github.com/crossplane/crossplane-runtime/pkg/controller"
 
+	"github.com/crossplane-contrib/provider-gcp/pkg/controller/anthos"
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/cache"
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/compute"
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/config"
@@ -39,6 +40,7 @@ import (
 // the supplied manager.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
+		anthos.SetupAttachedCluster,
 		cache.SetupCloudMemorystoreInstance,
 		compute.SetupGlobalAddress,
 		compute.SetupAddress,

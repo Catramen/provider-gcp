@@ -27,6 +27,9 @@ type ProviderConfigSpec struct {
 	// Credentials required to authenticate to this provider.
 	Credentials ProviderCredentials `json:"credentials"`
 
+	// AnthosCredentials required to authenticate to this provider.
+	AnthosCredentials *ProviderCredentials `json:"anthosCredentials,omitempty"`
+
 	// ProjectID is the project name (not numerical ID) of this GCP ProviderConfig.
 	ProjectID string `json:"projectID"`
 
