@@ -119,7 +119,7 @@ func (s *Service) GetAttachedCluster(ctx context.Context, a *v1alpha1.AttachedCl
 		return err
 	}
 	a.Status.AtProvider.State = at.State
-	a.Status.AtProvider.MembershipID = fmt.Sprintf("projects/%s/locations/%s/memberships/%s", a.Spec.ForProvider.Fleet.Project, a.Spec.ForProvider.Location, a.Name)
+	a.Status.AtProvider.MembershipID = at.Fleet.Membership
 	return nil
 }
 
@@ -213,7 +213,8 @@ type Authority struct {
 
 // Fleet is the fleet setting.
 type Fleet struct {
-	Project string `json:"project,omitempty"`
+	Project    string `json:"project,omitempty"`
+	Membership string `json:"membership,omitempty"`
 }
 
 // GCPOpts sets the gcp parameters.

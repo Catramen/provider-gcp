@@ -124,7 +124,10 @@ func (e *External) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 	}
 	_, err := e.gkeHub.GetFeatureMembership(ctx, obj)
 	if err != nil {
-		return managed.ExternalObservation{}, fmt.Errorf("failed to create feature membership %w", err)
+		if dcl.IsNotFound(err) {
+			return managed.ExternalObservation{}, nil
+		}
+		return managed.ExternalObservation{}, fmt.Errorf("failed to create observe membership %w", err)
 	}
 	cr.Status.SetConditions(xpv1.Available())
 	return managed.ExternalObservation{
