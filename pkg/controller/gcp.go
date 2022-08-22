@@ -28,6 +28,7 @@ import (
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/container"
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/database"
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/dns"
+	"github.com/crossplane-contrib/provider-gcp/pkg/controller/featuremembership"
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/hubfeature"
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/iam"
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/kms"
@@ -42,7 +43,8 @@ import (
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
 		anthos.SetupAttachedCluster,
-		hubfeature.SetupHubFeatureMembership,
+		hubfeature.SetupHubFeature,
+		featuremembership.SetupHubFeatureMembership,
 		cache.SetupCloudMemorystoreInstance,
 		compute.SetupGlobalAddress,
 		compute.SetupAddress,

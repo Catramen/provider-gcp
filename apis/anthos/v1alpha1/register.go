@@ -45,7 +45,15 @@ var (
 	AttachedClusterGroupVersionKind = SchemeGroupVersion.WithKind(AttachedClusterKind)
 )
 
-// AttachedCluster type metadata.
+// HubFeature type metadata.
+var (
+	HubFeatureKind             = reflect.TypeOf(HubFeature{}).Name()
+	HubFeatureGroupKind        = schema.GroupKind{Group: Group, Kind: HubFeatureKind}.String()
+	HubFeatureKindAPIVersion   = HubFeatureKind + "." + SchemeGroupVersion.String()
+	HubFeatureGroupVersionKind = SchemeGroupVersion.WithKind(HubFeatureKind)
+)
+
+// HubFeatureMembership type metadata.
 var (
 	HubFeatureMembershipKind             = reflect.TypeOf(HubFeatureMembership{}).Name()
 	HubFeatureMembershipGroupKind        = schema.GroupKind{Group: Group, Kind: HubFeatureMembershipKind}.String()
@@ -56,4 +64,5 @@ var (
 func init() {
 	SchemeBuilder.Register(&AttachedCluster{}, &AttachedClusterList{})
 	SchemeBuilder.Register(&HubFeatureMembership{}, &HubFeatureMembershipList{})
+	SchemeBuilder.Register(&HubFeature{}, &HubFeatureList{})
 }

@@ -86,6 +86,72 @@ func (mg *AttachedCluster) SetWriteConnectionSecretToReference(r *xpv1.SecretRef
 	mg.Spec.WriteConnectionSecretToReference = r
 }
 
+// GetCondition of this HubFeature.
+func (mg *HubFeature) GetCondition(ct xpv1.ConditionType) xpv1.Condition {
+	return mg.Status.GetCondition(ct)
+}
+
+// GetDeletionPolicy of this HubFeature.
+func (mg *HubFeature) GetDeletionPolicy() xpv1.DeletionPolicy {
+	return mg.Spec.DeletionPolicy
+}
+
+// GetProviderConfigReference of this HubFeature.
+func (mg *HubFeature) GetProviderConfigReference() *xpv1.Reference {
+	return mg.Spec.ProviderConfigReference
+}
+
+/*
+GetProviderReference of this HubFeature.
+Deprecated: Use GetProviderConfigReference.
+*/
+func (mg *HubFeature) GetProviderReference() *xpv1.Reference {
+	return mg.Spec.ProviderReference
+}
+
+// GetPublishConnectionDetailsTo of this HubFeature.
+func (mg *HubFeature) GetPublishConnectionDetailsTo() *xpv1.PublishConnectionDetailsTo {
+	return mg.Spec.PublishConnectionDetailsTo
+}
+
+// GetWriteConnectionSecretToReference of this HubFeature.
+func (mg *HubFeature) GetWriteConnectionSecretToReference() *xpv1.SecretReference {
+	return mg.Spec.WriteConnectionSecretToReference
+}
+
+// SetConditions of this HubFeature.
+func (mg *HubFeature) SetConditions(c ...xpv1.Condition) {
+	mg.Status.SetConditions(c...)
+}
+
+// SetDeletionPolicy of this HubFeature.
+func (mg *HubFeature) SetDeletionPolicy(r xpv1.DeletionPolicy) {
+	mg.Spec.DeletionPolicy = r
+}
+
+// SetProviderConfigReference of this HubFeature.
+func (mg *HubFeature) SetProviderConfigReference(r *xpv1.Reference) {
+	mg.Spec.ProviderConfigReference = r
+}
+
+/*
+SetProviderReference of this HubFeature.
+Deprecated: Use SetProviderConfigReference.
+*/
+func (mg *HubFeature) SetProviderReference(r *xpv1.Reference) {
+	mg.Spec.ProviderReference = r
+}
+
+// SetPublishConnectionDetailsTo of this HubFeature.
+func (mg *HubFeature) SetPublishConnectionDetailsTo(r *xpv1.PublishConnectionDetailsTo) {
+	mg.Spec.PublishConnectionDetailsTo = r
+}
+
+// SetWriteConnectionSecretToReference of this HubFeature.
+func (mg *HubFeature) SetWriteConnectionSecretToReference(r *xpv1.SecretReference) {
+	mg.Spec.WriteConnectionSecretToReference = r
+}
+
 // GetCondition of this HubFeatureMembership.
 func (mg *HubFeatureMembership) GetCondition(ct xpv1.ConditionType) xpv1.Condition {
 	return mg.Status.GetCondition(ct)
