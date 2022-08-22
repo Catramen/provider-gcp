@@ -15,6 +15,7 @@ package anthos
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -78,12 +79,14 @@ func (e *attachedClusterExternal) Observe(ctx context.Context, mg resource.Manag
 		return managed.ExternalObservation{}, fmt.Errorf("not attached cluster")
 	}
 	if err := e.s.GetAttachedCluster(ctx, cr); err != nil {
-		return managed.ExternalObservation{}, fmt.Errorf("cannot create attached cluster %v", err)
+		if errors.Is(err, anthos.ErrNotExist) {
+			return managed.ExternalObservation{}, nil
+		}
+		return managed.ExternalObservation{}, fmt.Errorf("cannot create get cluster %v", err)
 	}
 	switch cr.Status.AtProvider.State {
 	case "PROVISIONING":
 		cr.Status.SetConditions(xpv1.Creating())
-
 	case "RUNNING":
 		cr.Status.SetConditions(xpv1.Available())
 	case "ERROR":

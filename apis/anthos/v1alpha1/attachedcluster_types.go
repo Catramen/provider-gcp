@@ -85,7 +85,7 @@ type AttachedClusterStatus struct {
 // +kubebuilder:printcolumn:name="LOCATION",type="string",JSONPath=".spec.forProvider.location"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:object:root=true
-// +kubebuilder:resource:scope=AttachedCluster,categories={crossplane,managed,gcp}
+// +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,gcp}
 type AttachedCluster struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
@@ -38,6 +37,9 @@ import (
 	"github.com/crossplane-contrib/provider-gcp/apis/v1beta1"
 	gcp "github.com/crossplane-contrib/provider-gcp/pkg/clients"
 )
+
+// ErrNotExist is the rror when the cluster does not exits
+var ErrNotExist = errors.New("AttachedCluster does not exists")
 
 // Service is the attached cluster service.
 type Service struct {
@@ -78,7 +80,7 @@ func NewService(ctx context.Context, kube client.Client, mg resource.Managed) (*
 			return nil, err
 		}
 	}
-
+	opts = append(opts, option.WithAudiences("https://autopush-gkemulticloud.sandbox.googleapis.com/"))
 	return &Service{
 		projectID: projectID,
 		opts:      opts,
@@ -248,6 +250,9 @@ func getInstallManifest(ctx context.Context, gcp GCPOpts, i InstallManifest, opt
 		return nil, err
 	}
 	fmt.Printf("got response %s", string(r))
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("get manifest faield %s", string(r))
+	}
 	a := &InstallManifest{}
 	if err := json.Unmarshal(r, a); err != nil {
 		return nil, err
@@ -273,7 +278,6 @@ func createAttachedCluster(ctx context.Context, gcp GCPOpts, attached AttachedCl
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Gfe-Ssl", "yes")
-	req.Header.Set("Authorization", os.ExpandEnv("Bearer $(gcloud auth print-access-token)"))
 
 	resp, err := c.Do(req)
 	if err != nil {
@@ -287,6 +291,9 @@ func createAttachedCluster(ctx context.Context, gcp GCPOpts, attached AttachedCl
 		return err
 	}
 	fmt.Printf("got response %s", string(r))
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("creation faield %s", string(r))
+	}
 	return nil
 }
 
@@ -317,6 +324,9 @@ func deleteAttachedCluster(ctx context.Context, name string, gcp GCPOpts, opts .
 		return err
 	}
 	fmt.Printf("got response %s", string(r))
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("deletion faield %s", string(r))
+	}
 	return nil
 }
 
@@ -347,6 +357,12 @@ func getAttachedCluster(ctx context.Context, name string, gcp GCPOpts, opts ...o
 		return nil, err
 	}
 	fmt.Printf("got response %s", string(r))
+	if resp.StatusCode == 404 {
+		return nil, ErrNotExist
+	}
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("get faield %s", string(r))
+	}
 	a := &AttachedCluster{}
 	if err := json.Unmarshal(r, a); err != nil {
 		return nil, err
