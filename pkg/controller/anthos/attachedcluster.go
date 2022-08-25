@@ -92,7 +92,6 @@ func (e *attachedClusterExternal) Observe(ctx context.Context, mg resource.Manag
 	case "ERROR":
 		cr.Status.SetConditions(xpv1.Unavailable())
 	}
-
 	return managed.ExternalObservation{
 		ResourceExists:   true,
 		ResourceUpToDate: true,
@@ -127,7 +126,10 @@ func (e *attachedClusterExternal) Create(ctx context.Context, mg resource.Manage
 	}
 	if e.s.Kube == nil {
 		fmt.Println("kubeclient not built")
-		return managed.ExternalCreation{}, nil
+		return managed.ExternalCreation{}, fmt.Errorf("Creation waiting for k8s secret")
+	}
+	if cr.Spec.ForProvider.Authority.IssuerURL == "" {
+		return managed.ExternalCreation{}, fmt.Errorf("Waittng for issuer url to be filled")
 	}
 	m, err := e.s.GetInstallManifest(ctx, cr.Spec.ForProvider.Location, anthos.InstallManifest{
 		AttachedClusterID: cr.Name,

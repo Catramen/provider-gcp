@@ -31,6 +31,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/clientcmd/api"
+	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/crossplane-contrib/provider-gcp/apis/anthos/v1alpha1"
@@ -64,28 +65,37 @@ func NewService(ctx context.Context, kube client.Client, mg resource.Managed) (*
 		return nil, err
 	}
 
-	var userClusterKube client.Client
-	cred := pc.Spec.AnthosCredentials
-	if cred != nil {
-		var rc *rest.Config
-		kc, err := resource.CommonCredentialExtractor(ctx, cred.Source, kube, cred.CommonCredentialSelectors)
-		if err != nil {
-			return nil, err
-		}
-		if rc, err = NewRESTConfig(kc); err != nil {
-			return nil, err
-		}
-		userClusterKube, err = NewKubeClient(rc)
-		if err != nil {
-			return nil, err
-		}
-	}
+	userClusterKube := getClient(ctx, pc, kube)
 	opts = append(opts, option.WithAudiences("https://autopush-gkemulticloud.sandbox.googleapis.com/"))
 	return &Service{
 		projectID: projectID,
 		opts:      opts,
 		Kube:      userClusterKube,
 	}, nil
+}
+
+func getClient(ctx context.Context, pc *v1beta1.ProviderConfig, kube client.Client) client.Client {
+	cred := pc.Spec.AnthosCredentials
+	if cred == nil {
+		return nil
+	}
+	var rc *rest.Config
+	kc, err := resource.CommonCredentialExtractor(ctx, cred.Source, kube, cred.CommonCredentialSelectors)
+	if err != nil {
+		klog.Errorf("failed to extra cred %v", err)
+		return nil
+	}
+	if rc, err = NewRESTConfig(kc); err != nil {
+		klog.Errorf("failed to build rest %v", err)
+		return nil
+	}
+	k, err := NewKubeClient(rc)
+	if err != nil {
+		klog.Errorf("failed to build kubeclient %v", err)
+		return nil
+	}
+	return k
+
 }
 
 // GetInstallManifest gets the install manifests.
@@ -230,7 +240,7 @@ func getInstallManifest(ctx context.Context, gcp GCPOpts, i InstallManifest, opt
 		return nil, err
 	}
 
-	url := fmt.Sprintf("https://autopush-gkemulticloud.sandbox.googleapis.com/v1/projects/%s/locations/%s/generateAttachedClusterInstallManifest?attached_cluster_id=%s&platform_version=%s", gcp.Project, gcp.Region, i.AttachedClusterID, i.PlatformVersion)
+	url := fmt.Sprintf("https://autopush-gkemulticloud.sandbox.googleapis.com/v1/projects/%s/locations/%s:generateAttachedClusterInstallManifest?attached_cluster_id=%s&platform_version=%s", gcp.Project, gcp.Region, i.AttachedClusterID, i.PlatformVersion)
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return nil, err

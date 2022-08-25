@@ -142,6 +142,9 @@ func (e *External) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 	if !ok {
 		return managed.ExternalCreation{}, fmt.Errorf("not feature")
 	}
+	if cr.Spec.ForProvider.Membership == "" {
+		return managed.ExternalCreation{}, fmt.Errorf("waiting for the membership filed")
+	}
 	obj := &gkehub.FeatureMembership{
 		Project:          dcl.String(e.projectID),
 		Location:         dcl.String(cr.Spec.ForProvider.Location),
