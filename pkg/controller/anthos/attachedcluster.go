@@ -66,11 +66,12 @@ func (c *attachedClusterConnector) Connect(ctx context.Context, mg resource.Mana
 	if err != nil {
 		return nil, err
 	}
-	return &attachedClusterExternal{s: s}, nil
+	return &attachedClusterExternal{kube: c.kube, s: s}, nil
 }
 
 type attachedClusterExternal struct {
-	s *anthos.Service
+	kube client.Client
+	s    *anthos.Service
 }
 
 func (e *attachedClusterExternal) Observe(ctx context.Context, mg resource.Managed) (managed.ExternalObservation, error) { // nolint:gocyclo
@@ -124,7 +125,8 @@ func (e *attachedClusterExternal) Create(ctx context.Context, mg resource.Manage
 	if !ok {
 		return managed.ExternalCreation{}, fmt.Errorf("not attached cluster")
 	}
-	if e.s.Kube == nil {
+	kube := anthos.GetClusterKubeClient(ctx, &cr.Spec.ForProvider.ClusterCredentials, e.kube)
+	if kube == nil {
 		fmt.Println("kubeclient not built")
 		return managed.ExternalCreation{}, fmt.Errorf("Creation waiting for k8s secret")
 	}
@@ -144,8 +146,8 @@ func (e *attachedClusterExternal) Create(ctx context.Context, mg resource.Manage
 	}
 
 	c := resource.ClientApplicator{
-		Client:     e.s.Kube,
-		Applicator: resource.NewAPIPatchingApplicator(e.s.Kube),
+		Client:     kube,
+		Applicator: resource.NewAPIPatchingApplicator(kube),
 	}
 	for _, r := range resources {
 		if err := c.Apply(ctx, r); err != nil {

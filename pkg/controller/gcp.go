@@ -30,6 +30,7 @@ import (
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/dns"
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/featuremembership"
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/hubfeature"
+	"github.com/crossplane-contrib/provider-gcp/pkg/controller/hubmembership"
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/iam"
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/kms"
 	"github.com/crossplane-contrib/provider-gcp/pkg/controller/pubsub"
@@ -42,6 +43,7 @@ import (
 // the supplied manager.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
+		hubmembership.SetupHubMembership,
 		anthos.SetupAttachedCluster,
 		hubfeature.SetupHubFeature,
 		featuremembership.SetupHubFeatureMembership,

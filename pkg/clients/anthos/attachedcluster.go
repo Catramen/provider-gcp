@@ -46,7 +46,6 @@ var ErrNotExist = errors.New("AttachedCluster does not exists")
 type Service struct {
 	projectID string
 	opts      []option.ClientOption
-	Kube      client.Client
 }
 
 // NewService returns a new servcie.
@@ -65,17 +64,14 @@ func NewService(ctx context.Context, kube client.Client, mg resource.Managed) (*
 		return nil, err
 	}
 
-	userClusterKube := getClient(ctx, pc, kube)
 	opts = append(opts, option.WithAudiences("https://autopush-gkemulticloud.sandbox.googleapis.com/"))
 	return &Service{
 		projectID: projectID,
 		opts:      opts,
-		Kube:      userClusterKube,
 	}, nil
 }
 
-func getClient(ctx context.Context, pc *v1beta1.ProviderConfig, kube client.Client) client.Client {
-	cred := pc.Spec.AnthosCredentials
+func GetClusterKubeClient(ctx context.Context, cred *v1alpha1.ClusterCredentials, kube client.Client) client.Client {
 	if cred == nil {
 		return nil
 	}
@@ -108,6 +104,15 @@ func (s *Service) GetInstallManifest(ctx context.Context, location string, i Ins
 
 // CreateAttachedCluster creates the attached clsuter.
 func (s *Service) CreateAttachedCluster(ctx context.Context, a *v1alpha1.AttachedCluster) error {
+	var users []User
+	for _, u := range a.Spec.ForProvider.AdminUsers {
+		users = append(users, User{UserName: u})
+	}
+	var auth *AttachedClustersAuthorization
+	if len(users) != 0 {
+		auth = &AttachedClustersAuthorization{AdminUsers: users}
+	}
+
 	return createAttachedCluster(ctx, GCPOpts{s.projectID, a.Spec.ForProvider.Location},
 		AttachedCluster{
 			Name: a.Name,
@@ -118,6 +123,8 @@ func (s *Service) CreateAttachedCluster(ctx context.Context, a *v1alpha1.Attache
 				Project: a.Spec.ForProvider.Fleet.Project,
 			},
 			PlatformVersion: a.Spec.ForProvider.PlatformVersion,
+			Authorization:   auth,
+			Distribution:    a.Spec.ForProvider.Distribution,
 		}, s.opts...,
 	)
 }
@@ -199,14 +206,26 @@ func restConfigFromAPIConfig(c *api.Config) (*rest.Config, error) {
 
 // AttachedCluster is the attached cluster resource.
 type AttachedCluster struct {
-	Name            string    `json:"name,omitempty"`
-	Authority       Authority `json:"authority,omitempty"`
-	Fleet           Fleet     `json:"fleet,omitempty"`
-	PlatformVersion string    `json:"platform_version,omitempty"`
-	State           string    `json:"state,omitempty"`
-	UID             string    `json:"uid,omitempty"`
-	CreateTime      string    `json:"create_time,omitempty"`
-	Etag            string    `json:"etag,omitempty"`
+	Name            string                         `json:"name,omitempty"`
+	Authority       Authority                      `json:"authority,omitempty"`
+	Fleet           Fleet                          `json:"fleet,omitempty"`
+	PlatformVersion string                         `json:"platform_version,omitempty"`
+	Authorization   *AttachedClustersAuthorization `json:"authorization,omitempty"`
+	Distribution    string                         `json:"distribution,omitempty"`
+	State           string                         `json:"state,omitempty"`
+	UID             string                         `json:"uid,omitempty"`
+	CreateTime      string                         `json:"create_time,omitempty"`
+	Etag            string                         `json:"etag,omitempty"`
+}
+
+// AttachedClustersAuthorization is the attachedcluster admin set up.
+type AttachedClustersAuthorization struct {
+	AdminUsers []User `json:"admin_users,omitempty"`
+}
+
+// User is a user.
+type User struct {
+	UserName string `json:"username,omitempty"`
 }
 
 // InstallManifest is the install manifest for attached cluster.

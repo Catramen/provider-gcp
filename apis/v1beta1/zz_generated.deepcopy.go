@@ -113,11 +113,6 @@ func (in *ProviderConfigList) DeepCopyObject() runtime.Object {
 func (in *ProviderConfigSpec) DeepCopyInto(out *ProviderConfigSpec) {
 	*out = *in
 	in.Credentials.DeepCopyInto(&out.Credentials)
-	if in.AnthosCredentials != nil {
-		in, out := &in.AnthosCredentials, &out.AnthosCredentials
-		*out = new(ProviderCredentials)
-		(*in).DeepCopyInto(*out)
-	}
 	if in.ClientOptions != nil {
 		in, out := &in.ClientOptions, &out.ClientOptions
 		*out = new(ClientOptions)

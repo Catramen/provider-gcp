@@ -27,9 +27,12 @@ type AttachedClusterParameters struct {
 	// Location: The name of the Google Compute
 	Location string `json:"location"`
 	// PlatformVersion is the platform version.
-	PlatformVersion string    `json:"platformVersion,omitempty"`
-	Authority       Authority `json:"authority,omitempty"`
-	Fleet           Fleet     `json:"fleet,omitempty"`
+	PlatformVersion    string             `json:"platformVersion,omitempty"`
+	Authority          Authority          `json:"authority,omitempty"`
+	Fleet              Fleet              `json:"fleet,omitempty"`
+	ClusterCredentials ClusterCredentials `json:"clusterCredentials,omitempty"`
+	AdminUsers         []string           `json:"adminUsers,omitempty"`
+	Distribution       string             `json:"distribution,omitempty"`
 }
 
 // Authority is the OIDC authority.
@@ -62,6 +65,14 @@ type AttachedClusterObservation struct {
 	MembershipID string `json:"membershipId,omitempty"`
 
 	KubernetesVersion string `json:"kubernetesVersion,omitempty"`
+}
+
+// ClusterCredentials required to authenticate.
+type ClusterCredentials struct {
+	// Source of the cluster credentials.
+	// +kubebuilder:validation:Enum=None;Secret;InjectedIdentity;Environment;Filesystem
+	Source                         xpv1.CredentialsSource `json:"source"`
+	xpv1.CommonCredentialSelectors `json:",inline"`
 }
 
 // A AttachedClusterSpec defines the desired state of a Cluster.
