@@ -71,6 +71,7 @@ func NewService(ctx context.Context, kube client.Client, mg resource.Managed) (*
 	}, nil
 }
 
+// GetClusterKubeClient builds the kubeclient for the cluster.
 func GetClusterKubeClient(ctx context.Context, cred *v1alpha1.ClusterCredentials, kube client.Client) client.Client {
 	if cred == nil {
 		return nil
@@ -104,7 +105,7 @@ func (s *Service) GetInstallManifest(ctx context.Context, location string, i Ins
 
 // CreateAttachedCluster creates the attached clsuter.
 func (s *Service) CreateAttachedCluster(ctx context.Context, a *v1alpha1.AttachedCluster) error {
-	var users []User
+	users := []User{}
 	for _, u := range a.Spec.ForProvider.AdminUsers {
 		users = append(users, User{UserName: u})
 	}
