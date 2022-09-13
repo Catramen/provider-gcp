@@ -50,8 +50,9 @@ var (
 	}
 )
 
-// const gkeHubBase = "https://gkehub.googleapis.com/"
-const gkeHubBase = "https://autopush-gkehub.sandbox.googleapis.com/"
+const gkeHubBase = "https://gkehub.googleapis.com/"
+
+// const gkeHubBase = "https://autopush-gkehub.sandbox.googleapis.com/"
 
 // SetupHubFeature adds a controller that reconciles HubFeature managed
 // resources.

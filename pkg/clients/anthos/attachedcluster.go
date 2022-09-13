@@ -39,6 +39,8 @@ import (
 	gcp "github.com/crossplane-contrib/provider-gcp/pkg/clients"
 )
 
+var baseURL = "https://us-east4-preprod-gkemulticloud.sandbox.googleapis.com/"
+
 // ErrNotExist is the rror when the cluster does not exits
 var ErrNotExist = errors.New("AttachedCluster does not exists")
 
@@ -64,7 +66,7 @@ func NewService(ctx context.Context, kube client.Client, mg resource.Managed) (*
 		return nil, err
 	}
 
-	opts = append(opts, option.WithAudiences("https://autopush-gkemulticloud.sandbox.googleapis.com/"))
+	opts = append(opts, option.WithAudiences(baseURL))
 	return &Service{
 		projectID: projectID,
 		opts:      opts,
@@ -260,7 +262,7 @@ func getInstallManifest(ctx context.Context, gcp GCPOpts, i InstallManifest, opt
 		return nil, err
 	}
 
-	url := fmt.Sprintf("https://autopush-gkemulticloud.sandbox.googleapis.com/v1/projects/%s/locations/%s:generateAttachedClusterInstallManifest?attached_cluster_id=%s&platform_version=%s", gcp.Project, gcp.Region, i.AttachedClusterID, i.PlatformVersion)
+	url := fmt.Sprintf("%sv1/projects/%s/locations/%s:generateAttachedClusterInstallManifest?attached_cluster_id=%s&platform_version=%s", baseURL, gcp.Project, gcp.Region, i.AttachedClusterID, i.PlatformVersion)
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -298,7 +300,7 @@ func createAttachedCluster(ctx context.Context, gcp GCPOpts, attached AttachedCl
 		return err
 	}
 
-	url := fmt.Sprintf("https://autopush-gkemulticloud.sandbox.googleapis.com/v1/projects/%s/locations/%s/attachedClusters?attached_cluster_id=%s", gcp.Project, gcp.Region, attached.Name)
+	url := fmt.Sprintf("%sv1/projects/%s/locations/%s/attachedClusters?attached_cluster_id=%s", baseURL, gcp.Project, gcp.Region, attached.Name)
 	body, err := json.Marshal(attached)
 	if err != nil {
 		return err
@@ -335,7 +337,7 @@ func deleteAttachedCluster(ctx context.Context, name string, gcp GCPOpts, opts .
 		return err
 	}
 
-	url := fmt.Sprintf("https://autopush-gkemulticloud.sandbox.googleapis.com/v1/projects/%s/locations/%s/attachedClusters/%s", gcp.Project, gcp.Region, name)
+	url := fmt.Sprintf("%sv1/projects/%s/locations/%s/attachedClusters/%s", baseURL, gcp.Project, gcp.Region, name)
 	req, err := http.NewRequestWithContext(ctx, "DELETE", url, nil)
 	if err != nil {
 		return err
@@ -368,7 +370,7 @@ func getAttachedCluster(ctx context.Context, name string, gcp GCPOpts, opts ...o
 		return nil, err
 	}
 
-	url := fmt.Sprintf("https://autopush-gkemulticloud.sandbox.googleapis.com/v1/projects/%s/locations/%s/attachedClusters/%s", gcp.Project, gcp.Region, name)
+	url := fmt.Sprintf("%sv1/projects/%s/locations/%s/attachedClusters/%s", baseURL, gcp.Project, gcp.Region, name)
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return nil, err

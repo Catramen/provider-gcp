@@ -50,8 +50,9 @@ var (
 	}
 )
 
-// const gkeHubBase = "https://gkehub.googleapis.com/"
-const gkeHubBase = "https://autopush-gkehub.sandbox.googleapis.com/"
+const gkeHubBase = "https://gkehub.googleapis.com/"
+
+// const gkeHubBase = "https://autopush-gkehub.sandbox.googleapis.com/"
 
 // SetupHubMembership adds a controller that reconciles HubMembership managed
 // resources.
