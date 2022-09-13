@@ -270,6 +270,7 @@ type NodeConfig struct {
 	Labels map[string]string `json:"labels,omitempty"`
 
 	// LinuxNodeConfig: Parameters that can be configured on Linux nodes.
+	// +optional
 	LinuxNodeConfig *LinuxNodeConfig `json:"linuxNodeConfig,omitempty"`
 
 	// LocalSsdCount: The number of local SSD disks to be attached to the
@@ -483,6 +484,7 @@ type LinuxNodeConfig struct {
 	// net.core.wmem_default net.core.wmem_max net.core.optmem_max
 	// net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem
 	// net.ipv4.tcp_tw_reuse
+	// +optional
 	Sysctls map[string]string `json:"sysctls"`
 }
 

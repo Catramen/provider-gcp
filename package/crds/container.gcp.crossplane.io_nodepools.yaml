@@ -229,8 +229,6 @@ spec:
                               net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem
                               net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse'
                             type: object
-                        required:
-                        - sysctls
                         type: object
                       localSsdCount:
                         description: "LocalSsdCount: The number of local SSD disks
