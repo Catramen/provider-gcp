@@ -337,7 +337,7 @@ func deleteAttachedCluster(ctx context.Context, name string, gcp GCPOpts, opts .
 		return err
 	}
 
-	url := fmt.Sprintf("%sv1/projects/%s/locations/%s/attachedClusters/%s", baseURL, gcp.Project, gcp.Region, name)
+	url := fmt.Sprintf("%sv1/projects/%s/locations/%s/attachedClusters/%s?ignore_errors=true", baseURL, gcp.Project, gcp.Region, name)
 	req, err := http.NewRequestWithContext(ctx, "DELETE", url, nil)
 	if err != nil {
 		return err
