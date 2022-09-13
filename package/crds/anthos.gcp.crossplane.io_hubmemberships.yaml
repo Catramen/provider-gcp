@@ -26,12 +26,6 @@ spec:
     - jsonPath: .status.conditions[?(@.type=='Synced')].status
       name: SYNCED
       type: string
-    - jsonPath: .status.atProvider.status
-      name: STATE
-      type: string
-    - jsonPath: .spec.forProvider.location
-      name: LOCATION
-      type: string
     - jsonPath: .metadata.creationTimestamp
       name: AGE
       type: date
