@@ -210,7 +210,7 @@ func restConfigFromAPIConfig(c *api.Config) (*rest.Config, error) {
 // AttachedCluster is the attached cluster resource.
 type AttachedCluster struct {
 	Name            string                         `json:"name,omitempty"`
-	Authority       Authority                      `json:"authority,omitempty"`
+	Authority       Authority                      `json:"oidc_config,omitempty"`
 	Fleet           Fleet                          `json:"fleet,omitempty"`
 	PlatformVersion string                         `json:"platform_version,omitempty"`
 	Authorization   *AttachedClustersAuthorization `json:"authorization,omitempty"`
