@@ -166,6 +166,9 @@ func (e *MembershipExternal) Create(ctx context.Context, mg resource.Managed) (m
 				ResourceLink: dcl.String(fmt.Sprintf("//container.googleapis.com/%s", cr.Spec.ForProvider.GKEClusterID)),
 			},
 		},
+		Authority: &gkehub.MembershipAuthority{
+			Issuer: dcl.String(fmt.Sprintf("https://container.googleapis.com/v1/%s", cr.Spec.ForProvider.GKEClusterID)),
+		},
 		Location: dcl.String("global"),
 	}
 	_, err := e.gkeHub.ApplyMembership(ctx, obj, CreateDirective...)

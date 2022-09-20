@@ -26,6 +26,7 @@ import (
 type HubMembershipParameters struct {
 	MembershipID string `json:"membershipId"`
 	GKEClusterID string `json:"GkeClusterId,omitempty"`
+	Issuer       string `json:"Issuer,omitempty"`
 }
 
 // HubMembershipObservation is the cluster output.
