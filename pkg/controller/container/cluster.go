@@ -18,6 +18,7 @@ package container
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/go-cmp/cmp"
 	container "google.golang.org/api/container/v1"
@@ -148,7 +149,9 @@ func (e *clusterExternal) Create(ctx context.Context, mg resource.Managed) (mana
 		return managed.ExternalCreation{}, errors.New(errNotCluster)
 	}
 	cr.SetConditions(xpv1.Creating())
-
+	cr.Spec.ForProvider.WorkloadIdentityConfig = &v1beta2.WorkloadIdentityConfig{
+		WorkloadPool: fmt.Sprintf("%s.id.goog", e.projectID),
+	}
 	// Wait until creation is complete if already provisioning.
 	if cr.Status.AtProvider.Status == v1beta2.ClusterStateProvisioning {
 		return managed.ExternalCreation{}, nil
